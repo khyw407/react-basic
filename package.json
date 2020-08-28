@@ -80,7 +80,7 @@
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "node scripts/start.js",
-    "build": "node scripts/build.js",
+    "build": "node --max-old-space-size=8192 scripts/build.js",
     "test": "node scripts/test.js"
   },
   "eslintConfig": {
