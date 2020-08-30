@@ -1,23 +1,33 @@
 import React from 'react';
-import HeaderAndSidebar from './HeaderAndSidebar';
-import routes from './routes';
+import HeaderAndSidebar from '../HeaderAndSidebar';
+import routes from '../../routes';
 import { Route, Switch, Redirect } from 'react-router-dom';
 
 const RootContainer = () => {
-  let parentRoutes = routes.filter(route => route.component && !route.childIds);
+  let routeMap = (route, index) => {
+    let isGroup = !!route.routes?.length;
+    let props = {
+      key: index,
+      path: route.path,
+      component: route.component,
+      exact: route.exact ?? true,
+    };
+    if (isGroup) return (
+      <Route {...props} exact={false}>
+        <Switch>
+          {route.routes.map(routeMap)}
+          <Redirect to={route.routes[0].path} />
+        </Switch>
+      </Route>
+    );
+    return <Route {...props} />;
+  };
+
   return (
     <HeaderAndSidebar>
       <Switch>
-        {parentRoutes.map(({ id, icon, href, component, exact }) => (
-          <Route
-            key={id}
-            path={href}
-            component={component}
-            exact={typeof exact === 'boolean' ? exact : true}
-          />
-        ))}
-        {/*if route doesnt exist then redirect to first route*/}
-        <Redirect to={parentRoutes[0].href} />
+        {routes.map(routeMap)}
+        <Redirect to={routes[0].href} />
       </Switch>
     </HeaderAndSidebar>
   );

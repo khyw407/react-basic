@@ -1,4 +1,5 @@
 import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
 import { StylesProvider, ThemeProvider } from '@material-ui/styles';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { CssBaseline } from '@material-ui/core';
@@ -31,33 +32,20 @@ export const theme = createMuiTheme({
   },
 });
 
-let ContextProviders = ({ providers = [], children }) => {
-  return providers.reverse().reduce((_children, provider) => {
-    let [Provider, value] = [].concat(provider);
-    return (
-      <Provider value={value}>
-        {_children}
-      </Provider>
-    );
-  }, children);
-};
-
 export default (props) => {
   return (
-    <ContextProviders providers={[
-      RootProvider,
-    ]}>
-      <StylesProvider injectFirst>
-        <ThemeProvider theme={theme}>
-          <GlobalStyle />
-          <CssBaseline />
-          <React.StrictMode>
-            <BrowserRouter>
-              <Route component={RootContainer} />
-            </BrowserRouter>
-          </React.StrictMode>
-        </ThemeProvider>
-      </StylesProvider>
-    </ContextProviders>
+    <StylesProvider injectFirst>
+      <ThemeProvider theme={theme}>
+        <GlobalStyle />
+        <CssBaseline />
+        <React.StrictMode>
+          <BrowserRouter>
+            <RootProvider>
+              <RootContainer />
+            </RootProvider>
+          </BrowserRouter>
+        </React.StrictMode>
+      </ThemeProvider>
+    </StylesProvider>
   );
 };
