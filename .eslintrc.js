@@ -12,5 +12,6 @@ module.exports = {
         "no-unused-vars": "warn",
         "react-hooks/rules-of-hooks": "error",
         "react-hooks/exhaustive-deps": "warn",
+        "no-unused-expressions": "off"
     }
 };
