@@ -91,7 +91,7 @@ export let useDidUpdate = (func, deps) => {
     }, deps); // eslint-disable-line
 };
 
-let usePromise = (
+export let usePromise = (
     asyncFunc,
     initialState = {},
 ) => {

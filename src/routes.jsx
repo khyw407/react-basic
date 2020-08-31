@@ -5,6 +5,7 @@ import PeopleIcon from '@material-ui/icons/People';
 import ScheduleIcon from '@material-ui/icons/Schedule';
 
 let HomeContainer = React.lazy(() => import('./components/HomeContainer'));
+let LoginContainer = React.lazy(() => import('./components/LoginContainer'));
 
 export default [
     {
@@ -27,5 +28,11 @@ export default [
         path: '/test3',
         component: HomeContainer,
         todo: true,
+      },
+      {
+        name: 'login',
+        path: '/login',
+        component: LoginContainer,
+        hidden: true,
       },
 ].filter(Boolean);

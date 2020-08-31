@@ -1,12 +1,19 @@
 import React from 'react';
 import { LinearProgress } from '@material-ui/core';
+import { useLocation } from 'react-router-dom';
+import routes from '../../routes';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import { BACKGROUND_COLOR } from '../../constants';
+import LoginConatiner from '../LoginContainer';
 
 let HeaderAndSidebar = ({ children }) => {
+  let location = useLocation();
+  let routeList = routes;
+  let isActive = routeList.find(route => route.hidden !== true && route.path === location.pathname);
+
   return (
-    <div css="display: flex; height: 100%;">
+    !!isActive ? (<div css="display: flex; height: 100%;">
       <Sidebar />
       <div css={`
         flex: 1;
@@ -36,7 +43,9 @@ let HeaderAndSidebar = ({ children }) => {
           </React.Suspense>
         </main>
       </div>
-    </div>
+    </div>)
+    :
+    (<LoginConatiner />)
   );
 };
 

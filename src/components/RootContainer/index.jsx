@@ -27,7 +27,6 @@ const RootContainer = () => {
     <HeaderAndSidebar>
       <Switch>
         {routes.map(routeMap)}
-        <Redirect to={routes[0].href} />
       </Switch>
     </HeaderAndSidebar>
   );

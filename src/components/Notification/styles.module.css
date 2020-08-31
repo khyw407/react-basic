@@ -1,0 +1,17 @@
+.snackbarSuccess {
+    background: #43a047;
+}
+
+.snackbarError {
+    background: #d32f2f;
+}
+
+.snackbarMessage {
+    display: flex;
+    align-items: center;
+}
+
+.snackbarMessageIcon {
+    margin-right: 8px;
+    font-size: 20px;
+}
