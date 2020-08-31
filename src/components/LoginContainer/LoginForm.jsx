@@ -7,7 +7,7 @@ import LoginFormPure from './LoginFormPure';
 let sleep = ms => new Promise(res => setTimeout(res, ms));
 
 let signInAndRedirect = async ({
-  username,
+  email,
   password,
   service_name,
   client_id,
@@ -17,7 +17,7 @@ let signInAndRedirect = async ({
     headers: { 'content-type': 'application/x-www-form-urlencoded' },
     url: '',
     data: qs.stringify({
-      username,
+      email,
       password,
       service_name,
       client_id,
@@ -43,7 +43,7 @@ let LoginForm = () => {
   let updateState = newState => setState(state => ({ ...state, ...newState }));
   let validateForm = () => {
     let errors = {};
-    if (!state.id) errors.id = `Please enter your username.`;
+    if (!state.id) errors.id = `Please enter your email.`;
     if (!state.pw) errors.pw = `Please enter your password.`;
     updateState({ errors });
     if (Object.keys(errors).length) return false;
@@ -58,14 +58,14 @@ let LoginForm = () => {
       let { id, pw } = state;
       try {
         await execSignInAndRedirect({
-          username: id,
+          email: id,
           password: pw,
         });
       } catch (err) {
         console.warn(err);
         let signInError;
         if (err.message === 'WRONG_CREDENTIALS') {
-          signInError = 'Incorrect username or password.';
+          signInError = 'Incorrect email or password.';
         } else {
           signInError = 'Sign in failed due to an unexpected error';
         }
@@ -82,11 +82,11 @@ let LoginForm = () => {
     <LoginFormPure
       isSigningIn={isSigningIn}
       onSubmit={handleSubmit}
-      username={state.id}
+      email={state.id}
       password={state.pw}
-      usernameOnChange={e => updateState({ id: e.target.value })}
+      emailOnChange={e => updateState({ id: e.target.value })}
       passwordOnChange={e => updateState({ pw: e.target.value })}
-      usernameError={state.errors.id}
+      emailError={state.errors.id}
       passwordError={state.errors.pw}
       signInError={state.errors.signInError}
       passwordInputRef={passwordInputRef}

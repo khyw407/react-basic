@@ -24,7 +24,7 @@ let Label = props => (
 let useConfig = () => {
   return {
     icon: logo,
-    btnColor: '#f6f7fb',
+    btnColor: '#ee1f60',
   };
 };
 
