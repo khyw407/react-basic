@@ -1,9 +1,9 @@
 import React from 'react';
 import { Button, CircularProgress } from '@material-ui/core';
 import UndoIcon from '@material-ui/icons/Undo';
-import { ReactComponent as AddBtnSvg } from '../../media/add-btn.svg';
-import { ReactComponent as DeleteBtnSvg } from '../../media/delete-btn.svg';
-import { ReactComponent as SaveBtnSvg } from '../../media/save-btn.svg';
+import { ReactComponent as AddBtnSvg } from '../media/add-btn.svg';
+import { ReactComponent as DeleteBtnSvg } from '../media/delete-btn.svg';
+import { ReactComponent as SaveBtnSvg } from '../media/save-btn.svg';
 
 let Btn = ({ ...props }) => (
   <Button

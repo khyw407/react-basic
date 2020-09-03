@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="28" height="24">
+    <g fill="none" fill-rule="evenodd">
+        <path fill="#000" d="M21.319 7.806l-3.125-3.125a.625.625 0 00-.444-.181h-10c-.69 0-1.25.56-1.25 1.25v12.5c0 .69.56 1.25 1.25 1.25h12.5c.69 0 1.25-.56 1.25-1.25v-10a.625.625 0 00-.181-.444zM11.5 5.75h5v2.5h-5v-2.5zm5 12.5h-5v-5h5v5zm1.25 0v-5c0-.69-.56-1.25-1.25-1.25h-5c-.69 0-1.25.56-1.25 1.25v5h-2.5V5.75h2.5v2.5c0 .69.56 1.25 1.25 1.25h5c.69 0 1.25-.56 1.25-1.25V6.006l2.5 2.5v9.744h-2.5z"/>
+        <text fill="#1B2334" font-family="AppleSDGothicNeo-Medium, Apple SD Gothic Neo" font-size="14" font-weight="400" letter-spacing="-.56" transform="translate(4)">
+            <tspan x="24" y="13">저장</tspan>
+        </text>
+    </g>
+</svg>

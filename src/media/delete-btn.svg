@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="28" height="24">
+    <g fill="none" fill-rule="evenodd">
+        <path fill="#000" d="M11.5 9.5h1.25V17H11.5V9.5zm3.75 0h1.25V17h-1.25V9.5zM6.5 5.75V7h1.25v12.5c0 .69.56 1.25 1.25 1.25h10c.69 0 1.25-.56 1.25-1.25V7h1.25V5.75h-15zM9 19.5V7h10v12.5H9zm2.5-16.25h5V4.5h-5V3.25z"/>
+        <text fill="#1B2334" font-family="AppleSDGothicNeo-Medium, Apple SD Gothic Neo" font-size="14" font-weight="400" letter-spacing="-.56" transform="translate(4)">
+            <tspan x="24" y="13">삭제</tspan>
+        </text>
+    </g>
+</svg>

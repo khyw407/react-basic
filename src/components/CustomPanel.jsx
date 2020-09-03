@@ -1,8 +1,16 @@
 import React from 'react';
 import { CircularProgress } from '@material-ui/core';
-import CustomPaper from '../CustomPaper';
-import { PRIMARY_COLOR } from '../../constants';
-import FlexCenter from './FlexCenter';
+import CustomPaper from './CustomPaper';
+import { PRIMARY_COLOR } from '../constants';
+
+let FlexCenter = ({ ...props }) => (
+    <div css={`
+        display: flex;
+        min-height: 300px;
+        align-items: center;
+        justify-content: center;
+    `} {...props} />
+);
 
 let AccentBar = ({ accentColor }) => (
   <div css={`
