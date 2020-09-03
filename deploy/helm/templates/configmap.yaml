@@ -1,6 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ .Values.configmap.name }}
-data:
-  LOG_LEVEL: info
