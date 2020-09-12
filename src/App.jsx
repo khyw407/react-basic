@@ -10,6 +10,8 @@ import '@openfonts/noto-sans-kr_korean';
 import moment from 'moment';
 import 'moment/locale/ko';
 import { PRIMARY_COLOR, TEXT_PRIMARY_COLOR, TEXT_SECONDARY_COLOR, SECONDARY_COLOR } from './constants';
+import 'react-dates/initialize';
+import 'react-dates/lib/css/_datepicker.css';
 
 moment.locale('ko');
 

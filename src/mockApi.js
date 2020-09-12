@@ -18,7 +18,7 @@ export default instance => {
         return [200, res];
     };
 
-    mock.onGet('/test').reply(rep(require('./mock-data/test.json')));
+    mock.onGet('/category').reply(rep(require('./mock-data/category.json')));
     
     mock.onAny().passThrough();
 };
