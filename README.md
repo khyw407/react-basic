@@ -71,7 +71,7 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/tr
 
 ### useAsync (deprecated)
 ```jsx
-import { useAsync } from '@51tf/react-common/hooks';
+import { useAsync } from '../hooks';
 ```
 2 ways to use useAsync
 ```jsx
@@ -108,7 +108,7 @@ let App = () => {
 
 ### usePromise
 ```jsx
-import { usePromise } from '@51tf/react-common/hooks';
+import { usePromise } from '../hooks';
 ```
 2 ways to use usePromise
 ```jsx
@@ -152,7 +152,7 @@ let App = () => {
 
 ### useIsMobile
 ```jsx
-import { useIsMobile } from '@51tf/react-common/hooks';
+import { useIsMobile } from '../hooks';
 
 let App = () => {
   let isMobile = useIsMobile();
@@ -163,7 +163,7 @@ let App = () => {
 
 ### useAssignedRef
 ```jsx
-import { useAssignedRef } from '@51tf/react-common/hooks';
+import { useAssignedRef } from '../hooks';
 
 let App = () => {
   let valA = Date.now();
@@ -176,7 +176,7 @@ let App = () => {
 
 ### useDidMount
 ```jsx
-import { useDidMount } from '@51tf/react-common/hooks';
+import { useDidMount } from '../hooks';
 
 /*
 same as React.useEffect() except
@@ -199,7 +199,7 @@ let App = () => {
 
 ### useDidUpdate
 ```jsx
-import { useDidUpdate } from '@51tf/react-common/hooks';
+import { useDidUpdate } from '../hooks';
 
 /*
 same as React.useEffect() except
@@ -217,7 +217,7 @@ React.useMemo(
 );
 */
 
-import { useMemoObject } from '@51tf/react-common/hooks';
+import { useMemoObject } from '../hooks';
 
 let Component = ({ prop1, prop2, prop3 }) => {
   let memoizedObject = useMemoObject({ prop1, prop2 });
@@ -245,7 +245,7 @@ let Component = ({ prop1, prop2, prop3 }) => {
 useCallbackRef keeps a function identity unchanged over time while keeping its content up-to-date
 */
 
-import { useCallbackRef } from '@51tf/react-common/hooks';
+import { useCallbackRef } from '../hooks';
 
 let Component = ({ prop1, prop2, prop3 }) => {
   let [currentValue, setCurrentValue] = React.useState('');
@@ -274,7 +274,7 @@ let Component = ({ prop1, prop2, prop3 }) => {
 ### ContextProviders
 ```jsx
 import { ContextProviders } from '@51tf/react-common/components';
-import { useMemoObject } from '@51tf/react-common/hooks';
+import { useMemoObject } from '../hooks';
 import [ SomeProvider ] from './context';
 
 let Context1 = React.createContext();
