@@ -273,7 +273,7 @@ let Component = ({ prop1, prop2, prop3 }) => {
 
 ### ContextProviders
 ```jsx
-import { ContextProviders } from '@51tf/react-common/components';
+import ContextProviders from '../ContextProviders';
 import { useMemoObject } from '../hooks';
 import [ SomeProvider ] from './context';
 
