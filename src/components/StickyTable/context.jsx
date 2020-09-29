@@ -3,8 +3,9 @@ import ContextProviders from '../../ContextProviders';
 import { useCallbackRef } from '../../hooks';
 
 export let CellRefsCtx = React.createContext();
+export let ColorsCtx = React.createContext();
 
-export let StickyTableProvider = ({ children }) => {
+export let StickyTableProvider = ({ children, colors = {} }) => {
   let cells = React.useRef([]);
 
   let getCellRef = useCallbackRef(({ colIndex, rowIndex, colSpan, rowSpan }) => {
@@ -41,5 +42,6 @@ export let StickyTableProvider = ({ children }) => {
 
   return <ContextProviders children={children} providers={[
     { context: CellRefsCtx, memoValues: { getCellRef, getAdjacentCellRef } },
+    { context: ColorsCtx, value: colors },
   ]} />
 };

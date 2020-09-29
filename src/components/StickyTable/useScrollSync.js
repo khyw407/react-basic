@@ -1,5 +1,5 @@
 import React from 'react';
-import debounce from 'debounce';
+import debounce from 'lodash.debounce';
 
 let useScrollSync = () => {
   let scrollables = React.useRef({});

@@ -1,6 +1,10 @@
 let cssJoin = (...args) => `
   &&& {
-    ${args.filter(Boolean).join('\n')}
+    ${args
+      .map(str => str?.trim?.())
+      .filter(Boolean)
+      .map(str => `& { ${str} }`)
+      .join('\n')}
   }
 `;
 

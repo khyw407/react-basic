@@ -4,15 +4,25 @@ import memoizee from 'memoizee';
 import kindOf from 'kind-of';
 import React from 'react';
 import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import RawTableHead from './RawTableHead';
-import TableRow from '@material-ui/core/TableRow';
-import { BORDER_COLOR, TEXT_COLOR, SUBTEXT2_COLOR } from '../../constants';
+import RawTableBody from './RawTableBody';
 import cssJoin from './cssJoin';
-import { CellRefsCtx } from './context';
+import { CellRefsCtx, ColorsCtx } from './context';
+import { useCallbackRef } from '../../hooks';
+import clsx from 'clsx';
 
-let RawTable = React.memo(({ columns, rows, autoLayout, ...props }) => {
+let RawTable = React.memo(({ headerRows, columns, rows, autoLayout, className, ...props }) => {
+  let colors = React.useContext(ColorsCtx);
+  let headers = React.useMemo(() => {
+    if (headerRows?.length > 0) return headerRows;
+
+    let row = {};
+    columns.forEach(col => {
+      row[col.field] = col.title === undefined ? col.field : col.title;
+    });
+    return [row];
+  }, [headerRows, columns]);
   let { getCellRef } = React.useContext(CellRefsCtx);
   let styleComp = React.useMemo(
     () => memoizee(
@@ -20,17 +30,18 @@ let RawTable = React.memo(({ columns, rows, autoLayout, ...props }) => {
     ),
     [],
   );
+
   React.useEffect(() => {
     return () => styleComp.clear();
   }, [styleComp]);
 
-  let calcRowColSpan = React.useCallback((currentRow, field) => {
+  let calcRowColSpan = useCallbackRef((currentRow, field, surroundingRows) => {
     let val = currentRow[field];
     if (kindOf(val) !== 'function' && !React.isValidElement(val) && kindOf(val) !== 'object') return 1;
     
-    let currentRowIndex = rows.findIndex(row => row === currentRow);
+    let currentRowIndex = surroundingRows.findIndex(row => row === currentRow);
     let verticalOccurrences = []; // indexes of nearby cells in same column with same identity (vertical)
-    rows.forEach((row, rowIndex) => {
+    surroundingRows.forEach((row, rowIndex) => {
       if (row[field] !== val) return;
       if (verticalOccurrences.length === 0) return verticalOccurrences.push(rowIndex);
       let lastOccurrenceIndex = verticalOccurrences.slice().pop();
@@ -49,105 +60,113 @@ let RawTable = React.memo(({ columns, rows, autoLayout, ...props }) => {
     let colSpan = horizontalOccurrences.indexOf(currentColIndex) === 0 ? horizontalOccurrences.length : 0;
 
     return { rowSpan, colSpan };
-  }, [rows, columns]);
+  });
 
-  let widthCss = React.useCallback(num => `
+  let colInRowMapper = useCallbackRef(({ row, rowIndex, surroundingRows, topOffset }) => (col, colIndex) => {
+    let { rowSpan, colSpan } = calcRowColSpan(row, col.field, surroundingRows);
+    if (rowSpan === 0 || colSpan === 0) return null;
+    let _cellRef = getCellRef({ colIndex, rowIndex, colSpan, rowSpan });
+    let cellVal = row[col.field];
+    let commonProps = {
+      key: colIndex,
+      rowSpan,
+      colSpan,
+    };
+    let commonCss = cssJoin(
+      widthCss(col.minWidth),
+      `top: ${topOffset || 0}px`,
+      // isHeader && rowIndex > 0 && `top: ${38 * rowIndex}px`,
+      col.colCss,
+      row._rowCss,
+    );
+    if (kindOf(cellVal) === 'function') {
+      // deprecated due to poor performance (create new components on new update -> unnecessary re-mounts)
+      let ColCell = ({ cellRef, ...props }) => <TableCell
+        {...commonProps}
+        css={commonCss}
+        ref={mergeRefs([_cellRef, cellRef])}
+        {...props}
+      />;
+      return (
+        <React.Fragment key={colIndex}>
+          {cellVal(ColCell)}
+        </React.Fragment>
+      );
+    }
+    // if cellVal is plain JS object
+    if (kindOf(cellVal) === 'object' && !React.isValidElement(cellVal)) {
+      let { props, ref, value, component: Cell = TableCell } = cellVal;
+      let StyledCell = styleComp(Cell, commonCss);
+      return <StyledCell
+        {...commonProps}
+        ref={mergeRefs([_cellRef, ref])}
+        children={value}
+        {...props}
+      />;
+    }
+    return (
+      <TableCell
+        {...commonProps}
+        ref={mergeRefs([_cellRef])}
+        css={commonCss}
+        children={cellVal}
+      />
+    );
+  });
+
+  let widthCss = useCallbackRef(num => `
     ${autoLayout ? '' : `
       width: ${num}px;
     `}
     min-width: ${num}px;
-  `, [autoLayout]);
+  `);
 
   return (
-    <Table stickyHeader css={`
-      table-layout: ${autoLayout ? 'auto' : 'fixed'};
-      .MuiTableCell-stickyHeader {
-        left: auto;
-      }
-      .MuiTableCell-root {
-        text-align: center;
-        padding: 8px 4px;
-        word-wrap: break-word;
-      }
-      .MuiTableCell-head {
-        background: white;
-        border-bottom-color: white;
-        color: rgba(29, 33, 41, 0.6);
-        color: ${SUBTEXT2_COLOR};
-        font-size: 12px;
-        font-weight: 500;
-      }
-      .MuiTableCell-body {
-        font-weight: 500;
-        font-size: 12px;
-        color: ${TEXT_COLOR};
-      }
-      thead .MuiTableCell-head[rowspan],
-      thead tr:last-child .MuiTableCell-head {
-        border-bottom-color: ${BORDER_COLOR};
-      }
-    `} {...props}>
+    <Table
+      className={clsx('StickyTable-table', className)}
+      stickyHeader
+      css={`
+        table-layout: ${autoLayout ? 'auto' : 'fixed'};
+        .MuiTableCell-stickyHeader {
+          left: auto;
+        }
+        .MuiTableCell-root {
+          text-align: center;
+          padding: 8px 4px;
+          word-wrap: break-word;
+        }
+        .MuiTableCell-head {
+          background: white;
+          border-bottom-color: white;
+          color: rgba(29, 33, 41, 0.6);
+          color: ${colors.headerText};
+          font-size: 12px;
+          font-weight: 500;
+        }
+        .MuiTableCell-body {
+          font-weight: 500;
+          font-size: 12px;
+          color: ${colors.bodyText};
+        }
+        thead .MuiTableCell-head[rowspan],
+        thead tr:last-child .MuiTableCell-head {
+          border-bottom-color: ${colors.border};
+        }
+      `}
+      {...props}
+    >
       <RawTableHead
+        className={clsx('StickyTable-thead', className)}
+        headers={headers}
         columns={columns}
-        widthCss={widthCss}
+        colInRowMapper={colInRowMapper}
       />
-      <TableBody>
-        {rows.map((row, rowIndex) => {
-          return (
-            <TableRow key={rowIndex}>
-              {columns.map((col, colIndex) => {
-                let { rowSpan, colSpan } = calcRowColSpan(row, col.field);
-                if (rowSpan === 0 || colSpan === 0) return null;
-                let _cellRef = getCellRef({ colIndex, rowIndex, colSpan, rowSpan });
-                let cellVal = row[col.field];
-                let commonProps = {
-                  key: colIndex,
-                  rowSpan,
-                  colSpan,
-                };
-                let commonCss = cssJoin(
-                  widthCss(col.minWidth),
-                  col.colCss,
-                  row._rowCss,
-                );
-                if (kindOf(cellVal) === 'function') {
-                  // deprecated due to poor performance (create new components on new update -> unnecessary re-mounts)
-                  let ColCell = ({ cellRef, ...props }) => <TableCell
-                    {...commonProps}
-                    css={commonCss}
-                    ref={mergeRefs([_cellRef, cellRef])}
-                    {...props}
-                  />;
-                  return (
-                    <React.Fragment key={colIndex}>
-                      {cellVal(ColCell)}
-                    </React.Fragment>
-                  );
-                }
-                // if cellVal is plain JS object
-                if (kindOf(cellVal) === 'object' && !React.isValidElement(cellVal)) {
-                  let { props, ref, value, component: Cell = TableCell } = cellVal;
-                  let StyledCell = styleComp(Cell, commonCss);
-                  return <StyledCell
-                    {...commonProps}
-                    ref={mergeRefs([_cellRef, ref])}
-                    children={value}
-                    {...props}
-                  />;
-                }
-                return (
-                  <TableCell
-                    {...commonProps}
-                    ref={mergeRefs([_cellRef])}
-                    css={commonCss}
-                    children={cellVal}
-                  />
-                );
-              })}
-            </TableRow>
-          );
-        })}
-      </TableBody>
+      <RawTableBody
+        className={clsx('StickyTable-tbody', className)}
+        rows={rows}
+        columns={columns}
+        colInRowMapper={colInRowMapper}
+      />
     </Table>
   );
 });

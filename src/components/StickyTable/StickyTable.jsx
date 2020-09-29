@@ -1,57 +1,96 @@
+import PropTypes from 'prop-types';
 import { useMeasure } from 'react-use';
 import React from 'react';
 import clsx from 'clsx';
-import Scrollbar from '../Scrollbar';
-import { BORDER_COLOR } from '../../constants';
+import Scrollbar from './Scrollbar';
 import RawTable from './RawTable';
 import useScrollSync from './useScrollSync';
 import { StickyTableProvider } from './context';
 
-export default React.memo(function StickyTable({
+let defaultColors = {
+  border: '#dbdee8',
+  headerText: '#rgba(27, 35, 52, 0.5)',
+  bodyText: '#1b2334',
+  scrollbar: '#ee1f60',
+};
+
+let StickyTable = React.memo(({
+  headerRows,
   columns: _columns,
   rows,
-  colLayout, // [{ type: 'static', cols: [] }, { type: 'scrollable', cols: [] }]
+  colLayout: _colLayout, // [{ type: 'static', cols: [] }, { type: 'scrollable', cols: [] }]
   className,
+  colors: _colors = {},
+  maxHeight,
   ...props
- }) {
+ }) => {
+  let colors = {
+    ...defaultColors,
+    ..._colors,
+  };
+
+  let colLayout = React.useMemo(() => {
+    if (!_colLayout) return _colLayout;
+    return _colLayout.map(layout => ({
+      ...layout,
+      cols: layout.cols?.map?.(col => ({
+        ...col,
+        minWidth: col.minWidth || 0,
+      })),
+    }));
+  }, [_colLayout]);
+
   let columns = React.useMemo(() => {
     // if `colLayout` prop is specified then ignore `columns` prop;
     let cols = colLayout ? colLayout.flatMap(layout => layout.cols) : _columns;
     cols = cols.map(col => ({
       ...col,
-      minWidth: col.minWidth ?? 100,
-      colCss: col.colCss ?? col._colCss,
+      minWidth: col.minWidth || 0,
+      colCss: col.colCss || col._colCss,
     }));
     return cols;
   }, [colLayout, _columns]);
+
   let calcWidth = React.useCallback(
-    cols => cols.reduce((sum, col) => sum + col.minWidth, 0),
+    cols => cols.reduce((sum, col) => sum + (col.minWidth || 0), 0),
     [],
   );
+
   let allColsWidth = React.useMemo(
     () => calcWidth(columns),
     [columns, calcWidth],
   );
+
   let [measureRef, { width: tableContainerWidth }] = useMeasure();
   let { createScrollableRef } = useScrollSync();
 
   return (
-    <StickyTableProvider>
-      <div className={clsx('StickyTable-root', className)} css="min-height: 0" {...props}>
+    <StickyTableProvider colors={colors}>
+      <div
+        className={clsx('StickyTable-root', className)}
+        css={`
+          max-height: 100%;
+          min-height: 0;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+        `}
+        {...props}
+      >
         <div className="StickyTable-measureDiv" ref={measureRef} />
         <div className="StickyTable-container" css={`
           flex: 1;
-          height: 100%;
           width: 100%;
           display: flex;
           min-height: 150px;
           position: relative;
-          border: 1px solid ${BORDER_COLOR};
+          border: 1px solid ${colors.border};
         `}>
           {(() => {
+            if (tableContainerWidth <= 0) return null;
             if (!colLayout || allColsWidth <= tableContainerWidth) return (
-              <Scrollbar css="flex: 1">
-                <RawTable columns={columns} rows={rows} autoLayout />
+              <Scrollbar maxHeight={maxHeight} css="flex: 1">
+                <RawTable headerRows={headerRows} columns={columns} rows={rows} autoLayout />
               </Scrollbar>
             );
 
@@ -71,15 +110,16 @@ export default React.memo(function StickyTable({
                 key: colGroupIndex,
                 scrollableNodeRef: createScrollableRef(colGroupIndex),
                 hideScrollY,
+                maxHeight,
                 children: (
-                  <RawTable columns={adjustedCols} rows={rows} css={`
+                  <RawTable headerRows={headerRows} columns={adjustedCols} rows={rows} css={`
                     margin-left: ${negativeMarginLeft}px;
                   `} />
                 ),
               };
               let commonCss = `
                 ${clsx(colGroupIndex > 0 && `
-                  box-shadow: -1px 0 0 0 ${BORDER_COLOR};
+                  box-shadow: -1px 0 0 0 ${colors.border};
                 `)}
               `;
               
@@ -111,3 +151,19 @@ export default React.memo(function StickyTable({
     </StickyTableProvider>
   );
 });
+
+StickyTable.propTypes = {
+  headerRows: PropTypes.arrayOf(PropTypes.object),
+  columns: PropTypes.arrayOf(PropTypes.object),
+  colLayout: PropTypes.arrayOf(PropTypes.object),
+  rows: PropTypes.arrayOf(PropTypes.object),
+  colors: PropTypes.object,
+  maxHeight: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]),
+};
+
+StickyTable.displayName = 'StickyTable';
+
+export default StickyTable;
