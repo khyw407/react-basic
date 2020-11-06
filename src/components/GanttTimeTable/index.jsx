@@ -8,6 +8,7 @@ let GanttTimeTable = React.memo(({
   itemMargin = 0,
   zoomedIn = false,
   zoomedInWidth = 5000,
+  headerHeight = 38,
   rowHeight = 38,
   hideFirstCol,
 }) => {
@@ -47,7 +48,7 @@ let GanttTimeTable = React.memo(({
             sinceMidnightMinimum={sinceMidnightMinimum}
             sinceMidnightMaximum={sinceMidnightMaximum}
             itemMargin={itemMargin}
-            height={rowHeight}
+            height={headerHeight}
           />
         )
       }]}
