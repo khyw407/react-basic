@@ -1,4 +1,4 @@
-import { TimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
+import { KeyboardTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import React from 'react';
 import { TextField } from '@material-ui/core';
 import { BORDER_COLOR, TEXT_COLOR, SUBTEXT2_COLOR } from '../../constants';
@@ -37,7 +37,7 @@ let CustomDateInputField = ({ ...props }) => (
 );
 
 let HourPicker = ({ ...props }) => (
-  <TimePicker
+  <KeyboardTimePicker
     TextFieldComponent={CustomDateInputField}
     variant="inline"
     autoOk
